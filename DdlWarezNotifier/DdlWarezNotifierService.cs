@@ -26,10 +26,33 @@ namespace DdlWarezNotifier
 
         public DdlWarezNotifierService(ILogger<DdlWarezNotifierService> logger, IOptions<DdlWarezNotifierSettings> settings)
         {
-            _logger = logger;
+            LogSettings(logger, settings.Value);
+
+            if (settings.Value.Interval <= 0)
+            {
+                throw new ArgumentException("The notification interval needs to be set at least to 1 minute");
+            }
+
             this.settings = settings.Value;
-            bot = new Telegram.Bot.TelegramBotClient(settings.Value.Telegram.ApiToken);
+            try
+            {
+                bot = new Telegram.Bot.TelegramBotClient(settings.Value.Telegram.ApiToken);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("A valid telegram bot token needs to be set");
+            }
             chat = new ChatId(settings.Value.Telegram.ChatId);
+            _logger = logger;
+        }
+
+        private void LogSettings(ILogger logger, DdlWarezNotifierSettings settings)
+        {
+            logger.LogInformation("Got the following settings");
+            logger.LogInformation("Queries: {queries}", settings.Queries);
+            logger.LogInformation("Notification interval: {interval}", settings.Interval);
+            logger.LogInformation("Telegram chat ID: {chatId}", settings.Telegram.ChatId);
+            logger.LogInformation("Telegram bot token: {apiToken}", settings.Telegram.ApiToken);
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
