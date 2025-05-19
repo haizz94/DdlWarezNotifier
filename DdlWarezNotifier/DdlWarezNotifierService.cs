@@ -21,7 +21,7 @@ namespace DdlWarezNotifier
         private readonly List<string> _processedDownloads = new List<string>();
         private readonly ILogger<DdlWarezNotifierService> _logger;
         private readonly DdlWarezNotifierSettings settings;
-        private const string DDL_WAREZ_URL = "https://ddl-warez.to/";
+        private const string DDL_WAREZ_URL = "https://ddl-warez.cc/";
         private Timer _timer;
 
         public DdlWarezNotifierService(ILogger<DdlWarezNotifierService> logger, IOptions<DdlWarezNotifierSettings> settings)
